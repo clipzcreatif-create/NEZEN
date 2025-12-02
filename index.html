@@ -1,297 +1,404 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowRight, Menu, X, ShoppingBag, Play } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEZEN - Creative Dark Web</title>
+    
+    <!-- Tailwind CSS (via CDN untuk kemudahan) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-const NezenWeb = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrollYs, setScrollYs] = useState(0);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-  // Custom Cursor Logic
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  // Scroll Parallax Logic
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollYs(window.scrollY);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Smooth scroll
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    setIsMenuOpen(false);
-  };
-
-  return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen font-sans selection:bg-orange-600 selection:text-white overflow-x-hidden relative">
-      {/* Google Fonts Injection */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
-        
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        .font-inter { font-family: 'Inter', sans-serif; }
-        
-        .text-outline {
-          -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
-          color: transparent;
+    <!-- Konfigurasi Font Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        nezen: {
+                            black: '#0a0a0a',
+                            orange: '#ff4500'
+                        }
+                    }
+                }
+            }
         }
-        
-        .grain-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 50;
-          opacity: 0.05;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    </script>
+
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: white;
+            cursor: none; /* Menyembunyikan kursor asli untuk custom cursor */
+            overflow-x: hidden;
         }
 
+        /* Custom Cursor */
         .custom-cursor {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 20px;
-          height: 20px;
-          border: 2px solid #ff4500;
-          border-radius: 50%;
-          pointer-events: none;
-          transform: translate(-50%, -50%);
-          z-index: 9999;
-          transition: width 0.2s, height 0.2s, background-color 0.2s;
-          mix-blend-mode: difference;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ff4500;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            mix-blend-mode: difference;
         }
 
         .custom-cursor.hovered {
-          width: 50px;
-          height: 50px;
-          background-color: rgba(255, 69, 0, 0.2);
-          border-color: transparent;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 69, 0, 0.2);
+            border-color: transparent;
         }
-      `}</style>
 
-      {/* Grain Effect Overlay */}
-      <div className="grain-overlay"></div>
+        /* Text Outline Effect */
+        .text-outline {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            color: transparent;
+        }
+        
+        .text-outline-black { 
+            -webkit-text-stroke: 1px black; 
+            color: transparent; 
+        }
 
-      {/* Custom Cursor */}
-      <div 
-        className="custom-cursor hidden md:block"
-        style={{ left: mousePos.x, top: mousePos.y }}
-      />
+        .text-stroke-white {
+            -webkit-text-stroke: 1px white;
+            color: transparent;
+        }
 
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference">
-        <div className="text-2xl font-cinzel font-bold tracking-widest text-white cursor-pointer hover:text-orange-500 transition-colors">
-          NEZEN
+        /* Grain Effect Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee { 
+            animation: marquee 20s linear infinite; 
+        }
+
+        /* Utility for selection color */
+        ::selection {
+            background-color: #ff4500;
+            color: white;
+        }
+
+        /* Mobile Menu Animation */
+        .menu-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .menu-closed {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+
+    <!-- Custom Cursor Element -->
+    <div id="cursor" class="custom-cursor hidden md:block"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference">
+        <div class="text-2xl font-cinzel font-bold tracking-widest text-white cursor-pointer hover:text-nezen-orange transition-colors nav-item">
+            NEZEN
         </div>
         
-        <div className="hidden md:flex gap-8 font-inter text-sm uppercase tracking-widest text-gray-300">
-          {['Collection', 'Legacy', '625M', 'Journal'].map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`} className="hover:text-orange-500 transition-colors cursor-pointer relative group">
-              {item}
-              <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+        <div class="hidden md:flex gap-8 font-inter text-sm uppercase tracking-widest text-gray-300">
+            <a href="#collection" class="hover:text-nezen-orange transition-colors cursor-pointer relative group nav-item">
+                Collection
+                <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-nezen-orange transition-all duration-300 group-hover:w-full"></span>
             </a>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-6">
-          <ShoppingBag className="w-5 h-5 cursor-pointer hover:text-orange-500 transition-colors" />
-          <button onClick={() => setIsMenuOpen(true)} className="md:hidden">
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-8 font-cinzel text-4xl animate-in fade-in duration-300">
-          <button onClick={() => setIsMenuOpen(false)} className="absolute top-6 right-6">
-            <X className="w-8 h-8 text-white" />
-          </button>
-          {['Collection', 'Legacy', '625M', 'Journal'].map((item) => (
-            <a key={item} onClick={() => scrollToSection(item.toLowerCase())} className="hover:text-orange-600 transition-colors cursor-pointer">
-              {item}
+            <a href="#legacy" class="hover:text-nezen-orange transition-colors cursor-pointer relative group nav-item">
+                Legacy
+                <span class="absolute -bottom-2 left-0 w-0 h-[1px] bg-nezen-orange transition-all duration-300 group-hover:w-full"></span>
             </a>
-          ))}
+            <a href="#legacy" class="hover:text-nezen-orange transition-colors cursor-pointer relative group nav-item">
+                625M
+            </a>
         </div>
-      )}
 
-      {/* HERO SECTION */}
-      <header className="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden">
-        {/* Background Elements */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a] z-10 pointer-events-none"
-        />
+        <div class="flex items-center gap-6">
+            <i data-lucide="shopping-bag" class="w-5 h-5 cursor-pointer hover:text-nezen-orange transition-colors nav-item"></i>
+            <button id="menuBtn" class="md:hidden nav-item">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center space-y-8 font-cinzel text-4xl transition-opacity duration-300 menu-closed">
+        <button id="closeMenuBtn" class="absolute top-6 right-6 nav-item">
+            <i data-lucide="x" class="w-8 h-8 text-white"></i>
+        </button>
+        <a href="#collection" class="mobile-link hover:text-nezen-orange transition-colors cursor-pointer">Collection</a>
+        <a href="#legacy" class="mobile-link hover:text-nezen-orange transition-colors cursor-pointer">Legacy</a>
+        <a href="#" class="mobile-link hover:text-nezen-orange transition-colors cursor-pointer">625M</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <header class="relative w-full h-screen flex flex-col justify-center items-center overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0a0a0a] z-10 pointer-events-none"></div>
         
-        {/* Parallax Big Text Background */}
-        <h1 
-          className="absolute font-cinzel font-black text-[20vw] leading-none text-[#1a1a1a] select-none z-0"
-          style={{ transform: `translateY(${scrollYs * 0.2}px)` }}
-        >
-          NEZEN
+        <!-- Parallax Big Text Background -->
+        <h1 id="parallaxText" class="absolute font-cinzel font-black text-[20vw] leading-none text-[#1a1a1a] select-none z-0 whitespace-nowrap">
+            NEZEN
         </h1>
 
-        {/* Main Image Area - Using placeholder that mimics user image style */}
-        <div className="relative z-10 w-full max-w-4xl px-4 flex justify-center items-center group">
-           <div className="relative">
-              {/* Decorative Circle behind */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-orange-600 rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
+        <!-- Main Image Area -->
+        <div class="relative z-10 w-full max-w-4xl px-4 flex justify-center items-center group">
+           <div class="relative">
+              <!-- Decorative Circle behind -->
+              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-orange-600 rounded-full blur-[100px] opacity-20 group-hover:opacity-40 transition-opacity duration-700"></div>
               
-              {/* THE IMAGE (This represents the user's uploaded image) */}
-              {/* Note: I am using a placeholder URL. In a real scenario, the user would replace src with their image path */}
+              <!-- THE IMAGE -->
               <img 
                 src="https://images.unsplash.com/photo-1596726569107-160dc6ebc24c?q=80&w=2670&auto=format&fit=crop" 
                 alt="Knight Rider" 
-                className="relative w-full md:w-[600px] h-auto object-cover grayscale contrast-125 brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out drop-shadow-2xl"
+                class="relative w-full md:w-[600px] h-auto object-cover grayscale contrast-125 brightness-90 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700 ease-out drop-shadow-2xl nav-item"
               />
               
-              {/* Floating Element 625M */}
-              <div 
-                className="absolute -bottom-10 -right-4 md:right-10 md:bottom-10 font-cinzel text-4xl md:text-6xl text-white mix-blend-difference z-20"
-                style={{ transform: `translateY(-${scrollYs * 0.1}px)` }}
-              >
+              <!-- Floating Element 625M -->
+              <div id="floatingElement" class="absolute -bottom-10 -right-4 md:right-10 md:bottom-10 font-cinzel text-4xl md:text-6xl text-white mix-blend-difference z-20">
                 625M
               </div>
            </div>
         </div>
 
-        {/* Hero CTA */}
-        <div className="absolute bottom-12 left-0 w-full flex justify-between items-end px-6 md:px-12 z-20">
-          <div className="hidden md:block w-1/3 text-xs text-gray-400 font-inter leading-relaxed">
-            BASED ON THE ANCIENT OATH.<br/>
-            FORGED IN FIRE AND DIGITAL CHAOS.<br/>
-            EST. 2025 // JAKARTA.
-          </div>
-          <div className="flex flex-col items-center animate-bounce">
-            <span className="text-xs tracking-widest mb-2 text-gray-500">SCROLL TO EXPLORE</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-orange-500 to-transparent"></div>
-          </div>
-          <div className="w-1/3 flex justify-end">
-             <button className="bg-white text-black px-6 py-3 font-bold font-inter tracking-wider hover:bg-orange-600 hover:text-white transition-all duration-300 flex items-center gap-2 group">
-               SHOP NOW <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform"/>
-             </button>
-          </div>
-        </div>
-      </header>
-
-      {/* MARQUEE SECTION */}
-      <div className="py-12 bg-orange-600 text-black overflow-hidden whitespace-nowrap border-y border-black">
-        <div className="inline-block animate-marquee">
-          <span className="text-4xl md:text-6xl font-black font-cinzel mx-8">UNBROKEN SPIRIT</span>
-          <span className="text-4xl md:text-6xl font-black font-cinzel mx-8 text-transparent stroke-black border-black text-outline-black">RIDE THE FIRE</span>
-          <span className="text-4xl md:text-6xl font-black font-cinzel mx-8">625M LIMITED</span>
-          <span className="text-4xl md:text-6xl font-black font-cinzel mx-8 text-transparent text-outline-black">NO RETREAT</span>
-          <span className="text-4xl md:text-6xl font-black font-cinzel mx-8">UNBROKEN SPIRIT</span>
-          <span className="text-4xl md:text-6xl font-black font-cinzel mx-8 text-transparent stroke-black border-black text-outline-black">RIDE THE FIRE</span>
-        </div>
-        <style>{`
-          .text-outline-black { -webkit-text-stroke: 1px black; color: transparent; }
-          @keyframes marquee {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .animate-marquee { animation: marquee 20s linear infinite; }
-        `}</style>
-      </div>
-
-      {/* COLLECTION GRID */}
-      <section id="collection" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-16">
-          <h2 className="text-5xl md:text-7xl font-cinzel font-bold">
-            THE <span className="text-orange-600">ARMORY</span>
-          </h2>
-          <span className="hidden md:block font-inter text-gray-500">(04 ITEMS)</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { title: "THE PALADIN HOODIE", price: "IDR 899.000", img: "https://images.unsplash.com/photo-1515347619252-60a6bf4fffce?q=80&w=2660&auto=format&fit=crop" },
-            { title: "IRONCLAD VEST", price: "IDR 1.250.000", img: "https://images.unsplash.com/photo-1559582798-678dfc71ccd8?q=80&w=2668&auto=format&fit=crop" },
-            { title: "625M SIGNATURE TEE", price: "IDR 450.000", img: "https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=2574&auto=format&fit=crop" },
-            { title: "SHADOW ACCESSORY", price: "IDR 299.000", img: "https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=2535&auto=format&fit=crop" }
-          ].map((item, i) => (
-            <div key={i} className="group relative h-[500px] overflow-hidden bg-[#111] cursor-pointer">
-              <img 
-                src={item.img} 
-                alt={item.title}
-                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
-              
-              <div className="absolute bottom-6 left-6 z-10">
-                <h3 className="text-2xl font-cinzel font-bold mb-1 group-hover:text-orange-500 transition-colors">{item.title}</h3>
-                <p className="font-inter text-gray-400">{item.price}</p>
-              </div>
-              
-              <button className="absolute top-6 right-6 bg-white text-black p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-                <ArrowRight className="w-5 h-5" />
-              </button>
+        <!-- Hero CTA -->
+        <div class="absolute bottom-12 left-0 w-full flex justify-between items-end px-6 md:px-12 z-20">
+            <div class="hidden md:block w-1/3 text-xs text-gray-400 font-inter leading-relaxed">
+                BASED ON THE ANCIENT OATH.<br/>
+                FORGED IN FIRE AND DIGITAL CHAOS.<br/>
+                EST. 2025 // JAKARTA.
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* STORY / LEGACY SECTION */}
-      <section id="legacy" className="py-24 bg-[#0f0f0f] border-t border-gray-900 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-900/10 to-transparent"></div>
-        <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16 relative z-10">
-          <div className="w-full md:w-1/2">
-            <h2 className="text-4xl md:text-6xl font-cinzel font-bold mb-8 leading-tight">
-              FORGED IN <br/><span className="text-transparent text-outline-white text-stroke-white">DIGITAL FLAMES</span>
-            </h2>
-            <p className="text-gray-400 font-inter leading-loose mb-8 text-lg">
-              NEZEN bukan sekadar brand. Ini adalah pergerakan. Terinspirasi dari ketangguhan ksatria masa lalu dan kecepatan era digital masa depan. 625M adalah kode untuk mereka yang tidak pernah berhenti berlari.
-            </p>
-            <button className="border border-white px-8 py-3 hover:bg-white hover:text-black transition-all duration-300 font-inter tracking-widest text-sm flex items-center gap-3">
-              <Play className="w-4 h-4 fill-current" /> WATCH THE FILM
-            </button>
-          </div>
-          <div className="w-full md:w-1/2 h-[400px] md:h-[600px] relative border border-gray-800 p-2">
-            <div className="w-full h-full bg-gray-900 overflow-hidden relative group">
-               {/* Using a distinct, abstract fire/knight image */}
-               <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=2574&auto=format&fit=crop" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"/>
-               <div className="absolute inset-0 flex items-center justify-center">
-                 <div className="w-20 h-20 rounded-full border border-white/30 flex items-center justify-center backdrop-blur-sm cursor-pointer hover:scale-110 transition-transform">
-                    <Play className="w-8 h-8 fill-white text-white" />
-                 </div>
-               </div>
+            <div class="flex flex-col items-center animate-bounce">
+                <span class="text-xs tracking-widest mb-2 text-gray-500">SCROLL TO EXPLORE</span>
+                <div class="w-[1px] h-12 bg-gradient-to-b from-nezen-orange to-transparent"></div>
             </div>
-          </div>
+            <div class="w-1/3 flex justify-end">
+                <button class="bg-white text-black px-6 py-3 font-bold font-inter tracking-wider hover:bg-nezen-orange hover:text-white transition-all duration-300 flex items-center gap-2 group nav-item">
+                    SHOP NOW <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
         </div>
-      </section>
+    </header>
 
-      {/* FOOTER */}
-      <footer className="bg-black py-16 px-6 md:px-12 border-t border-gray-900">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
-          <h1 className="text-6xl md:text-9xl font-cinzel font-black text-white/10 select-none">NEZEN</h1>
-          <div className="flex gap-8 mt-8 md:mt-0 font-inter text-sm text-gray-500">
-            <a href="#" className="hover:text-white transition-colors">INSTAGRAM</a>
-            <a href="#" className="hover:text-white transition-colors">TWITTER</a>
-            <a href="#" className="hover:text-white transition-colors">DISCORD</a>
-          </div>
+    <!-- MARQUEE SECTION -->
+    <div class="py-12 bg-nezen-orange text-black overflow-hidden whitespace-nowrap border-y border-black">
+        <div class="inline-block animate-marquee">
+            <span class="text-4xl md:text-6xl font-black font-cinzel mx-8">UNBROKEN SPIRIT</span>
+            <span class="text-4xl md:text-6xl font-black font-cinzel mx-8 text-transparent stroke-black border-black text-outline-black">RIDE THE FIRE</span>
+            <span class="text-4xl md:text-6xl font-black font-cinzel mx-8">625M LIMITED</span>
+            <span class="text-4xl md:text-6xl font-black font-cinzel mx-8 text-transparent text-outline-black">NO RETREAT</span>
+            <span class="text-4xl md:text-6xl font-black font-cinzel mx-8">UNBROKEN SPIRIT</span>
+            <span class="text-4xl md:text-6xl font-black font-cinzel mx-8 text-transparent stroke-black border-black text-outline-black">RIDE THE FIRE</span>
         </div>
-        <div className="flex flex-col md:flex-row justify-between text-xs text-gray-600 font-inter border-t border-gray-900 pt-8">
-          <p>&copy; 2025 NEZEN STUDIOS. ALL RIGHTS RESERVED.</p>
-          <div className="flex gap-4 mt-4 md:mt-0">
-             <span>PRIVACY POLICY</span>
-             <span>TERMS OF SERVICE</span>
-          </div>
-        </div>
-      </footer>
     </div>
-  );
-};
 
-export default NezenWeb;
+    <!-- COLLECTION GRID -->
+    <section id="collection" class="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="flex justify-between items-end mb-16">
+            <h2 class="text-5xl md:text-7xl font-cinzel font-bold">
+                THE <span class="text-nezen-orange">ARMORY</span>
+            </h2>
+            <span class="hidden md:block font-inter text-gray-500">(04 ITEMS)</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Item 1 -->
+            <div class="group relative h-[500px] overflow-hidden bg-[#111] cursor-pointer nav-item">
+                <img src="https://images.unsplash.com/photo-1515347619252-60a6bf4fffce?q=80&w=2660&auto=format&fit=crop" alt="Hoodie" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                <div class="absolute bottom-6 left-6 z-10">
+                    <h3 class="text-2xl font-cinzel font-bold mb-1 group-hover:text-nezen-orange transition-colors">THE PALADIN HOODIE</h3>
+                    <p class="font-inter text-gray-400">IDR 899.000</p>
+                </div>
+                <button class="absolute top-6 right-6 bg-white text-black p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="group relative h-[500px] overflow-hidden bg-[#111] cursor-pointer nav-item">
+                <img src="https://images.unsplash.com/photo-1559582798-678dfc71ccd8?q=80&w=2668&auto=format&fit=crop" alt="Vest" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                <div class="absolute bottom-6 left-6 z-10">
+                    <h3 class="text-2xl font-cinzel font-bold mb-1 group-hover:text-nezen-orange transition-colors">IRONCLAD VEST</h3>
+                    <p class="font-inter text-gray-400">IDR 1.250.000</p>
+                </div>
+                <button class="absolute top-6 right-6 bg-white text-black p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="group relative h-[500px] overflow-hidden bg-[#111] cursor-pointer nav-item">
+                <img src="https://images.unsplash.com/photo-1503341504253-dff4815485f1?q=80&w=2574&auto=format&fit=crop" alt="Tee" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                <div class="absolute bottom-6 left-6 z-10">
+                    <h3 class="text-2xl font-cinzel font-bold mb-1 group-hover:text-nezen-orange transition-colors">625M SIGNATURE TEE</h3>
+                    <p class="font-inter text-gray-400">IDR 450.000</p>
+                </div>
+                <button class="absolute top-6 right-6 bg-white text-black p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="group relative h-[500px] overflow-hidden bg-[#111] cursor-pointer nav-item">
+                <img src="https://images.unsplash.com/photo-1618331835717-801e976710b2?q=80&w=2535&auto=format&fit=crop" alt="Accessory" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                <div class="absolute bottom-6 left-6 z-10">
+                    <h3 class="text-2xl font-cinzel font-bold mb-1 group-hover:text-nezen-orange transition-colors">SHADOW ACCESSORY</h3>
+                    <p class="font-inter text-gray-400">IDR 299.000</p>
+                </div>
+                <button class="absolute top-6 right-6 bg-white text-black p-3 rounded-full opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- STORY / LEGACY SECTION -->
+    <section id="legacy" class="py-24 bg-[#0f0f0f] border-t border-gray-900 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-900/10 to-transparent"></div>
+        <div class="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center gap-16 relative z-10">
+            <div class="w-full md:w-1/2">
+                <h2 class="text-4xl md:text-6xl font-cinzel font-bold mb-8 leading-tight">
+                    FORGED IN <br/><span class="text-transparent text-stroke-white">DIGITAL FLAMES</span>
+                </h2>
+                <p class="text-gray-400 font-inter leading-loose mb-8 text-lg">
+                    NEZEN bukan sekadar brand. Ini adalah pergerakan. Terinspirasi dari ketangguhan ksatria masa lalu dan kecepatan era digital masa depan. 625M adalah kode untuk mereka yang tidak pernah berhenti berlari.
+                </p>
+                <button class="border border-white px-8 py-3 hover:bg-white hover:text-black transition-all duration-300 font-inter tracking-widest text-sm flex items-center gap-3 nav-item">
+                    <i data-lucide="play" class="w-4 h-4 fill-current"></i> WATCH THE FILM
+                </button>
+            </div>
+            <div class="w-full md:w-1/2 h-[400px] md:h-[600px] relative border border-gray-800 p-2">
+                <div class="w-full h-full bg-gray-900 overflow-hidden relative group nav-item">
+                   <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?q=80&w=2574&auto=format&fit=crop" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"/>
+                   <div class="absolute inset-0 flex items-center justify-center">
+                     <div class="w-20 h-20 rounded-full border border-white/30 flex items-center justify-center backdrop-blur-sm cursor-pointer hover:scale-110 transition-transform">
+                        <i data-lucide="play" class="w-8 h-8 text-white fill-white"></i>
+                     </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-black py-16 px-6 md:px-12 border-t border-gray-900">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
+            <h1 class="text-6xl md:text-9xl font-cinzel font-black text-white/10 select-none">NEZEN</h1>
+            <div class="flex gap-8 mt-8 md:mt-0 font-inter text-sm text-gray-500">
+                <a href="#" class="hover:text-white transition-colors nav-item">INSTAGRAM</a>
+                <a href="#" class="hover:text-white transition-colors nav-item">TWITTER</a>
+                <a href="#" class="hover:text-white transition-colors nav-item">DISCORD</a>
+            </div>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between text-xs text-gray-600 font-inter border-t border-gray-900 pt-8">
+            <p>&copy; 2025 NEZEN STUDIOS. ALL RIGHTS RESERVED.</p>
+            <div class="flex gap-4 mt-4 md:mt-0">
+                <span class="nav-item cursor-pointer">PRIVACY POLICY</span>
+                <span class="nav-item cursor-pointer">TERMS OF SERVICE</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Cursor Logic
+        const cursor = document.getElementById('cursor');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                cursor.classList.add('hovered');
+            });
+            item.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hovered');
+            });
+        });
+
+        // Parallax Logic
+        const parallaxText = document.getElementById('parallaxText');
+        const floatingElement = document.getElementById('floatingElement');
+        
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            if (parallaxText) {
+                parallaxText.style.transform = `translateY(${scrollY * 0.2}px)`;
+            }
+            if (floatingElement) {
+                floatingElement.style.transform = `translateY(-${scrollY * 0.1}px)`;
+            }
+        });
+
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            if (mobileMenu.classList.contains('menu-closed')) {
+                mobileMenu.classList.remove('menu-closed');
+                mobileMenu.classList.add('menu-open');
+            } else {
+                mobileMenu.classList.remove('menu-open');
+                mobileMenu.classList.add('menu-closed');
+            }
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+        
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+    </script>
+</body>
+</html>
